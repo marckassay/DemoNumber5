@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+import { ForegroundService } from '@ionic-native/foreground-service/ngx';
 import { NativeAudio } from '@ionic-native/native-audio/ngx';
+import { PartialObserver } from 'rxjs';
 import { add, CountdownSegment, CountupSegment, ITimeEmission, Sequencer } from 'sots';
 
 
@@ -20,7 +22,47 @@ export class TimerPage {
     output: string;
     disableButton: boolean;
 
-    constructor(private sound: NativeAudio) {
+    observer: PartialObserver<ITimeEmission> = {
+        next: (value: ITimeEmission): void => {
+            this.output = 'time: ' + value.time + '\n';
+
+            if (value.state) {
+                if (value.state.valueOf(AppStates.Alert)) {
+                    this.output += ' state: \'alert!\'' + '\n';
+                } else if (value.state.valueOf(AppStates.Warning)) {
+                    this.output += ' state: \'warning\'' + '\n';
+                } else if (value.state.valueOf(AppStates.Beep)) {
+                    this.output += ' state: \'beep\'' + '\n';
+                    this.sound.play('beep');
+                }
+
+                if (value.state.valueOf(AppStates.Rest)) {
+                    this.output += ' state: \'rest\'' + '\n';
+                } else if (value.state.valueOf(AppStates.Active)) {
+                    this.output += ' state: \'active\'' + '\n';
+                }
+            }
+
+            if (value.interval) {
+                this.output += ' interval.current: ' + value.interval.current;
+                this.output += ' interval.total: ' + value.interval.total;
+            }
+
+            console.log(this.output);
+        },
+        error: (error: any): void => {
+            console.error(error);
+        },
+        complete: (): void => {
+            this.sound.play('beep');
+            this.output = 'completed!';
+            this.disableButton = false;
+            this.sequencer.reset();
+            this.foregroundService.stop();
+        },
+    };
+
+    constructor(private sound: NativeAudio, private foregroundService: ForegroundService) {
         this.init();
         this.output = '---';
         this.disableButton = false;
@@ -60,42 +102,12 @@ export class TimerPage {
                     { state: AppStates.Warning, timeGreaterThanOrEqualTo: '3' }],
             });
 
-        this.sequencer.subscribe((value: ITimeEmission) => {
-            this.output = 'time: ' + value.time + '\n';
-
-            if (value.state) {
-                if (value.state.valueOf(AppStates.Alert)) {
-                    this.output += ' state: \'alert!\'' + '\n';
-                } else if (value.state.valueOf(AppStates.Warning)) {
-                    this.output += ' state: \'warning\'' + '\n';
-                } else if (value.state.valueOf(AppStates.Beep)) {
-                    this.output += ' state: \'beep\'' + '\n';
-                    this.sound.play('beep');
-                }
-
-                if (value.state.valueOf(AppStates.Rest)) {
-                    this.output += ' state: \'rest\'' + '\n';
-                } else if (value.state.valueOf(AppStates.Active)) {
-                    this.output += ' state: \'active\'' + '\n';
-                }
-            }
-
-            if (value.interval) {
-                this.output += ' interval.current: ' + value.interval.current;
-                this.output += ' interval.total: ' + value.interval.total;
-            }
-
-            console.log(this.output);
-        }, (error) => {
-            console.error(error);
-        }, () => {
-            this.sound.play('beep');
-            this.output = 'completed!';
-        });
+        this.sequencer.subscribe(this.observer);
     }
 
     start() {
         this.disableButton = true;
         this.sequencer.start();
+        this.foregroundService.start('Timer Running', 'Background Service', 'www\\assets\\icon\\favicon.png');
     }
 }
