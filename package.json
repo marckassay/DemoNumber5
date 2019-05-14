@@ -10,7 +10,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "linkplugin": "node ./node_modules/ionic-native-dev-util"
+    "linkplugin": "node ./node_modules/ionic-native-dev-util '..\\..\\marckassay\\ionic-native\\dist\\@ionic-native\\plugins\\foreground-service\\'",
+    "deploy": "ionic cordova build android && adb install -r ./platforms/android/app/build/outputs/apk/debug/app-debug.apk"
   },
   "private": true,
   "dependencies": {
@@ -28,7 +29,7 @@
     "@ionic/angular": "^4.1.0",
     "cordova-android": "8.0.0",
     "cordova-plugin-device": "^2.0.2",
-    "cordova-plugin-foreground-service": "1.1.1",
+    "cordova-plugin-foreground-service": "^1.1.1",
     "cordova-plugin-ionic-keyboard": "^2.1.3",
     "cordova-plugin-ionic-webview": "^4.0.1",
     "cordova-plugin-nativeaudio": "3.0.9",

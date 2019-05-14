@@ -9,14 +9,65 @@
     <ion-grid>
         <ion-row class="ion-justify-content-center">
             <ion-col align-self-center size="8">
-                <ion-button [disabled]="disableButton" (click)="start()">start</ion-button>
+                <ion-text color="primary">
+                    <h3>time: {{output.time}}</h3>
+                </ion-text>
             </ion-col>
         </ion-row>
         <ion-row class="ion-justify-content-center">
             <ion-col align-self-center size="8">
-                <ion-text color="primary">
-                    <h3>{{output}}</h3>
+                <ion-text color="primary" *ngIf="output.state">
+                    <h3>state: {{output.state}}</h3>
                 </ion-text>
+            </ion-col>
+        </ion-row>
+        <ion-row class="ion-justify-content-center">
+            <ion-col align-self-center size="8">
+                <ion-text color="primary" *ngIf="output.interval">
+                    <h3>current interval: {{output.interval.current}}</h3>
+                </ion-text>
+            </ion-col>
+        </ion-row>
+        <ion-row class="ion-justify-content-center">
+            <ion-col align-self-center size="8">
+                <ion-text color="primary" *ngIf="output.interval">
+                    <h3>total interval: {{output.interval.total}}</h3>
+                </ion-text>
+            </ion-col>
+        </ion-row>
+        <ion-row class="ion-justify-content-center">
+            <ion-col align-self-center size="8">
+                <ion-list>
+                    <ion-radio-group>
+                        <ion-list-header>
+                            <ion-label>Sequencer's period value</ion-label>
+                        </ion-list-header>
+                
+                        <ion-item>
+                            <ion-label>x100</ion-label>
+                            <ion-radio slot="start" value="100" checked (ionSelect)="togglePeriod(100)"></ion-radio>
+                        </ion-item>
+                
+                        <ion-item>
+                            <ion-label>x1000</ion-label>
+                            <ion-radio slot="start" value="1000" (ionSelect)="togglePeriod(1000)"></ion-radio>
+                        </ion-item>
+                
+                        <ion-item>
+                            <ion-label>x1100</ion-label>
+                            <ion-radio slot="start" value="1100" (ionSelect)="togglePeriod(1100)"></ion-radio>
+                        </ion-item>
+
+                    </ion-radio-group>
+                </ion-list>
+
+            </ion-col>
+        </ion-row>
+        <ion-row class="ion-justify-content-center">
+            <ion-col size="10" >
+                <ion-button [disabled]="disableButton" (click)="start()">start</ion-button>
+                <ion-button (click)="pause()">pause</ion-button>
+                <ion-button (click)="reset()">reset</ion-button>
             </ion-col>
         </ion-row>
     </ion-grid>

@@ -4,6 +4,11 @@ import { NativeAudio } from '@ionic-native/native-audio/ngx';
 import { PartialObserver } from 'rxjs';
 import { add, CountdownSegment, CountupSegment, ITimeEmission, Sequencer } from 'sots';
 
+interface TimeEmission {
+    time: number;
+    state ?: string;
+    interval ?: { current: number, total: number };
+}
 
 enum AppStates {
     Beep = 2,
@@ -19,52 +24,53 @@ enum AppStates {
 export class TimerPage {
 
     sequencer: Sequencer;
-    output: string;
+    output: TimeEmission;
     disableButton: boolean;
 
     observer: PartialObserver<ITimeEmission> = {
         next: (value: ITimeEmission): void => {
-            this.output = 'time: ' + value.time + '\n';
+            this.output.time = value.time;
 
             if (value.state) {
                 if (value.state.valueOf(AppStates.Alert)) {
-                    this.output += ' state: \'alert!\'' + '\n';
+                    this.output.state = 'alert!';
                 } else if (value.state.valueOf(AppStates.Warning)) {
-                    this.output += ' state: \'warning\'' + '\n';
+                    this.output.state = 'warning!';
                 } else if (value.state.valueOf(AppStates.Beep)) {
-                    this.output += ' state: \'beep\'' + '\n';
+                    this.output.state = 'beep!';
                     this.sound.play('beep');
                 }
 
                 if (value.state.valueOf(AppStates.Rest)) {
-                    this.output += ' state: \'rest\'' + '\n';
+                    this.output.state = 'rest';
                 } else if (value.state.valueOf(AppStates.Active)) {
-                    this.output += ' state: \'active\'' + '\n';
+                    this.output.state = 'active';
                 }
             }
 
             if (value.interval) {
-                this.output += ' interval.current: ' + value.interval.current;
-                this.output += ' interval.total: ' + value.interval.total;
+                this.output.interval = {current: value.interval.current, total: value.interval.total};
             }
 
             console.log(this.output);
         },
         error: (error: any): void => {
             console.error(error);
+            this.output = this.resetOutput('ERROR');
         },
         complete: (): void => {
             this.sound.play('beep');
-            this.output = 'completed!';
+            this.output = this.resetOutput('completed');
             this.disableButton = false;
             this.sequencer.reset();
             this.foregroundService.stop();
         },
     };
 
-    constructor(private sound: NativeAudio, private foregroundService: ForegroundService) {
+    constructor(private sound: NativeAudio,
+                private foregroundService: ForegroundService) {
         this.init();
-        this.output = '---';
+        this.output = this.resetOutput();
         this.disableButton = false;
         this.sound.preloadSimple('beep', 'assets/beep.mp3');
     }
@@ -108,6 +114,42 @@ export class TimerPage {
     start() {
         this.disableButton = true;
         this.sequencer.start();
-        this.foregroundService.start('Timer Running', 'Background Service', 'www\\assets\\icon\\favicon.png');
+        this.foregroundService.start('Timer Running',
+        'Background Service',
+        'drawable/fsicon');
+    }
+
+    reset() {
+        this.sequencer.reset();
+        this.output = this.resetOutput();
+        this.disableButton = false;
+    }
+
+    pause() {
+        this.sequencer.pause();
+        this.output.state = 'paused';
+        this.disableButton = false;
+    }
+
+    togglePeriod(value: number) {
+        this.sequencer.config.period = value;
+    }
+
+    private resetOutput(stat = 'loaded'): TimeEmission {
+        const deepClone = <T>(source: T): { [k: string]: any } => {
+            const results: { [k: string]: any } = {};
+            for (const P in source) {
+                if (typeof source[P] === 'object') {
+                    results[P] = deepClone(source[P]);
+                } else {
+                    results[P] = source[P];
+                }
+            }
+            return results;
+        };
+
+        const outputReset = { time: 0, state: stat, interval: { current: 0, total: 0 } };
+
+        return deepClone(outputReset) as TimeEmission;
     }
 }
