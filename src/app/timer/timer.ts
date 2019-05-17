@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ForegroundService } from '@ionic-native/foreground-service/ngx';
+import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 import { NativeAudio } from '@ionic-native/native-audio/ngx';
 import { PartialObserver } from 'rxjs';
 import { add, CountdownSegment, CountupSegment, ITimeEmission, Sequencer } from 'sots';
@@ -63,12 +63,12 @@ export class TimerPage {
             this.output = this.resetOutput('completed');
             this.disableButton = false;
             this.sequencer.reset();
-            this.foregroundService.stop();
+            this.background.disable();
         },
     };
 
     constructor(private sound: NativeAudio,
-                private foregroundService: ForegroundService) {
+                private background: BackgroundMode) {
         this.init();
         this.output = this.resetOutput();
         this.disableButton = false;
@@ -113,10 +113,9 @@ export class TimerPage {
 
     start() {
         this.disableButton = true;
+
         this.sequencer.start();
-        this.foregroundService.start('Timer Running',
-        'Background Service',
-        'drawable/fsicon');
+        this.enable_background_mode();
     }
 
     reset() {
@@ -133,6 +132,24 @@ export class TimerPage {
 
     togglePeriod(value: number) {
         this.sequencer.config.period = value;
+    }
+
+    private enable_background_mode() {
+        //
+        const options = {
+            title: 'Your-desired-title',
+            text: 'Your-desired-text',
+            icon: 'fsicon',
+            color: 'FF0000',
+            hidden: false,
+        };
+        this.background.setDefaults(options);
+        //
+/*         this.background.on('activate',() => {
+            console.log('background mode activated ');
+        }; */
+        //
+        this.background.enable();
     }
 
     private resetOutput(stat = 'loaded'): TimeEmission {

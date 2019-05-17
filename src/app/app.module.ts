@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
+import { BackgroundMode } from '@ionic-native/background-mode/ngx';
 import { ForegroundService } from '@ionic-native/foreground-service/ngx';
 import { NativeAudio } from '@ionic-native/native-audio/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -20,6 +21,7 @@ import { AppComponent } from './app.component';
     StatusBar,
     SplashScreen,
     NativeAudio,
+    BackgroundMode,
     { provide: ForegroundService, useClass: (env.useMocks === false) ? ForegroundService : ForegroundServiceMock },
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],

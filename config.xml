@@ -24,6 +24,18 @@
             <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
         </config-file>
         <resource-file src="www/assets/icon/fsicon.png" target="app/src/main/res/drawable/fsicon.png" />
+        <resource-file src="www/assets/icon/fsicon.png" target="app/src/main/res/mipmap-hdpi/fsicon.png" />
+        <resource-file src="www/assets/icon/fsicon.png" target="app/src/main/res/mipmap-hdpi-v26/fsicon.png" />
+        <resource-file src="www/assets/icon/fsicon.png" target="app/src/main/res/mipmap-ldpi/fsicon.png" />
+        <resource-file src="www/assets/icon/fsicon.png" target="app/src/main/res/mipmap-ldpi-v26/fsicon.png" />
+        <resource-file src="www/assets/icon/fsicon.png" target="app/src/main/res/mipmap-mdpi/fsicon.png" />
+        <resource-file src="www/assets/icon/fsicon.png" target="app/src/main/res/mipmap-mdpi-v26/fsicon.png" />
+        <resource-file src="www/assets/icon/fsicon.png" target="app/src/main/res/mipmap-xhdpi/fsicon.png" />
+        <resource-file src="www/assets/icon/fsicon.png" target="app/src/main/res/mipmap-xhdpi-v26/fsicon.png" />
+        <resource-file src="www/assets/icon/fsicon.png" target="app/src/main/res/mipmap-xxhdpi/fsicon.png" />
+        <resource-file src="www/assets/icon/fsicon.png" target="app/src/main/res/mipmap-xxhdpi-v26/fsicon.png" />
+        <resource-file src="www/assets/icon/fsicon.png" target="app/src/main/res/mipmap-xxxhdpi/fsicon.png" />
+        <resource-file src="www/assets/icon/fsicon.png" target="app/src/main/res/mipmap-xxxhdpi-v26/fsicon.png" />
         <allow-intent href="market:*" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
